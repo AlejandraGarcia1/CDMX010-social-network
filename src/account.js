@@ -1,10 +1,13 @@
 import { loginVisibility } from './loginVisibility.js';
 import { openModal } from './modal.js';
 import { ErrorAccount, SuccessAccount } from './modalError.js';
+import { navLinkVisibilityWithoutLogin } from './NavdisplayVisibilityFunctions.js';
 import { saveInfoUser } from './userColection.js';
-import { auth } from './firebase.js';
 
-export const account = `<div class="container-login">
+export const account = (firebase) => {
+	const auth = firebase.auth();
+	const firestore = firebase.firestore();
+	const template = `<div class="container-login">
     <div id="A-logo-container">
         <img id="A-logo" src="./images/logoGris.png" alt="Logo"> 
     </div>
@@ -35,69 +38,61 @@ export const account = `<div class="container-login">
         <div class="button-login">
             <button class="account-button" id="A-createAcount-button" type"submit">Crear cuenta</button>
         </div>
-    </form>
-</div>`;
+      </form>
+  </div>`;
+	
+	const rootDiv = document.getElementById('root');
+  rootDiv.innerHTML = template; 
+	createAccount(auth, firestore);
+  navLinkVisibilityWithoutLogin();
+} 
 
-// FUNCIÓN PARA REGISTRARSE CON CORREO ELECTRÓNICO Y CONTRASEÑA//
-export const createAccount = () => {
-  // Definimos un "e.preventDefault" para que no se renderice en automático el formulario
-  const accountForm = document.getElementById('input-section-account');
-  // Para detener la acción del fotm///
+// Usuario se registra con correo y contraseña.
+export const createAccount = (auth, firestore) => {  
+  const accountForm = document.getElementById('input-section-account');  
   accountForm.addEventListener('submit', (e) => {
     e.preventDefault();
   });
-
-  // Se asigna el evento "Click" al botón de registro///
+  
   const submitAccountButton = document.getElementById('A-createAcount-button');
   submitAccountButton.addEventListener('click', () => {
-    // Se obtienen los valores de los inputs
+
     const newMail = document.getElementById('A-input-mail').value;
     const createPassword = document.getElementById('A-input-password').value;
     const inputConfirmPassword = document.getElementById('A-input-password-confirm').value;
     const nameUser = document.getElementById('A-input-nameUser').value;
-    const aboutUser = document.getElementById('A-input-aboutme').value;
-    // Esconemos las notas en rojo, por si alguna información esta mal o incompleta
+    const aboutUser = document.getElementById('A-input-aboutme').value;    
     document.getElementById('A-error-password').style.display = 'none';
     document.getElementById('A-error-confirmPassworrd').style.display = 'none';
-    // Si el nombre del usuario no esta vacío y la longitud del password es mayor o igual a 8:
-    if (nameUser !== '' && createPassword.length >= 8) {
-      // Si al definir la contraseña y al confirmarla son iguales, entonces:
-      if (createPassword === inputConfirmPassword) {
-        // Se llama la variable 'auth' para aplicar los métodos de Firebase
+    
+    if (nameUser !== '' && createPassword.length >= 8) {      
+      if (createPassword === inputConfirmPassword) {        
         auth
-          // Creamos un nuevo usuario con el e-mail y contraseña que definió
-          .createUserWithEmailAndPassword(newMail, createPassword)
-          // Los campos de correo y contraseña, los definiremos como "userCredential"
+          // Creación del usuario en Firebase, obteniendo el userCredential.
+          .createUserWithEmailAndPassword(newMail, createPassword)          
           .then((userCredential) => {
-            openModal(SuccessAccount);
-            // Después de crear el usuario, nos redireccionaremos a la página de "LOGIN"
+            openModal(SuccessAccount);            
             const loginlink = document.getElementById('log');
             loginlink.click();
-            // Obtenemos el uid que definio Firebase, al crear el usuario
             const uidUser = userCredential.user.uid;
-            // console.log("Aqui", uidUser)
-            // Obtenemos la información que declaramos anteriormente en "userColection",
-            // que es la que se guarda en FIREBASE por cada usuari
-            saveInfoUser(newMail, uidUser, createPassword, nameUser, aboutUser, 'urlimg');
+            saveInfoUser(newMail, uidUser, createPassword, nameUser, aboutUser, 'urlImg', firestore);
           })
           .catch(() => {
             openModal(ErrorAccount);
           });
-      } else {
-        // Se muestran las líneas de los mensajes de error en rojo.
+      } else {        
         document.getElementById('A-error-confirmPassworrd').style.display = 'block';
       }
-    } else if (createPassword.length < 8) {
-      // Se muestran las líneas de los mensajes de error en rojo.
+    } else if (createPassword.length < 8) {      
       document.getElementById('A-error-password').style.display = 'block';
     }
   });
-  // Agregamos lo necesario para que se pueda ver u ocultar las contraseñas.
+  
   const showAccountPassword = document.getElementById('visibility-account-password');
   const accountPasswordInput = document.getElementById('A-input-password');
   const showConfirmPassword = document.getElementById('visibility-confirm-password');
   const confirmPasswordInput = document.getElementById('A-input-password-confirm');
-  // Se ejecuta la función de visibility//
+ 
   loginVisibility(showAccountPassword, accountPasswordInput);
   loginVisibility(showConfirmPassword, confirmPasswordInput);
 };

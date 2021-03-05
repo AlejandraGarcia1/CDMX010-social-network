@@ -1,9 +1,7 @@
-// VALIDAMOS QUE EL POST QUE QUEREMOS PONER ES VÁLIDO O NO,
-// PARA QUE SE DESPLIEGUE EL BOTÓN DE PIBLICAR
+// EVITAR QUE SE PUBLIQUEN POST EN BLANCO O VACÍOS
 export const validPost = () => {
   const btnPublicar = document.getElementById('publicar');
   const newPostInput = document.getElementById('newPostPerfil');
-  // const btnsDelete= document.querySelectorAll('.btn-delete');
   const marginBottomInput = document.querySelectorAll('.post')[0];
   marginBottomInput.style.marginBottom = '10%';
   btnPublicar.style.display = 'none';
@@ -12,7 +10,6 @@ export const validPost = () => {
     // let asciiValidation = (/[u033-u255]/); /// También esta opción funciona(NO BORRAR :3)
     const asciiValidation = new RegExp(/[!-□]/g);
     const stringValidation = asciiValidation.test(inputString);
-    // console.log(stringValidation);
     if (stringValidation === true) {
       btnPublicar.style.display = 'block';
       marginBottomInput.style.marginBottom = '0%';
@@ -23,14 +20,13 @@ export const validPost = () => {
   });
 };
 
-// FUNCIÓN PARA EDITAR EL POST
+// EVITA QUE AL EDITAR UN POST, ESTE POST QUEDE VACÍO.
 export const validEditedPost = (changeIcon, enableWrite) => {
   changeIcon.style.display = 'block';
   enableWrite.addEventListener('keyup', () => {
     const textEdit = enableWrite.value;
     const asciiValidation = new RegExp(/[!-□]/g);
     const stringValidation = asciiValidation.test(textEdit);
-    // console.log(stringValidation);
     if (stringValidation === true) {
       changeIcon.style.display = 'block';
     } else {
@@ -49,7 +45,7 @@ export const cancelEditPost = (id, textPost) => {
   cancelEditbutton.addEventListener('click', () => {
     enableWrite.value = textPost;
     changeIcon.src = './images/edit.png';
-    // enableWrite.setAttribute('readonly',true); // también sirve
+    // enableWrite.setAttribute('readonly',true); otra opcion de cómo se puede escribir
     enableWrite.readOnly = true;
     interactionContainer.style.display = 'flex';
     cancelEditContainer.style.display = 'none';

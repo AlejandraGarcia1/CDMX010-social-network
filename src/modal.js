@@ -19,10 +19,8 @@ export function closeModal() {
 
 // QUE APAREZCAN LOS MODALES, SEGUN LAS REGLAS QUE LES DEFINIMOS
 export const openModal = (mensajeError) => {
-  // visibilidad de la transparencia del modal
   modalContainer.style.opacity = '1';
   modalContainer.style.visibility = 'visible';
-  // toggle, quita o pone la clase "modal-close"
   modal.classList.toggle('modal-close');
   modalAlert.innerHTML = mensajeError;
   closeModal();

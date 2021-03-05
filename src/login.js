@@ -4,9 +4,11 @@ import { loginVisibility } from './loginVisibility.js';
 import { openModal } from './modal.js';
 import { loginGithub } from './loginGithub.js';
 import { ErrorLoginMail } from './modalError.js';
-import { auth } from './firebase.js';
+import { navLinkVisibilityWithoutLogin } from './NavdisplayVisibilityFunctions.js';
 
-export const login = `<div class="container-login">
+export const login =  (firebase) => {
+	const auth = firebase.auth();
+	const template = `<div class="container-login">
     <div id="A-logo-container">
         <img id="A-logo" src="./images/logoGris.png" alt="Logo"> 
     </div>
@@ -41,49 +43,48 @@ export const login = `<div class="container-login">
     </div>
 </div>`;
 
-export const loginWithMail = () => {
+  const rootDiv = document.getElementById('root');
+  rootDiv.innerHTML = template;
+
+  loginWithMail(auth);
+  navLinkVisibilityWithoutLogin();
+}
+
+// Iniciar sesión con el e-mail registrado.
+export const loginWithMail = (auth) => {
   const singupForm = document.getElementById('input-section-login');
-  singupForm.addEventListener('submit', (e) => {
-    // Con el "e.preventDefault" evitamos que se renderice la página en automático
+  singupForm.addEventListener('submit', (e) => {    
     e.preventDefault();
   });
-  // Enlace para registrarse, en caso de que no se cuente con alguna Cuenta.
+  // El e-mail no se encuentra registrado.
   const accountLinkLogin = document.getElementById('accountLink-login');
   accountLinkLogin.addEventListener('click', () => {
-    const accountLink = document.getElementById('acc');
-    // Al darle click, nos lleva a la sección de "Crear cuenta"
+    const accountLink = document.getElementById('acc');  
     accountLink.click();
   });
-  // Se asigna el evento 'click' al botón de LOGIN
+ 
   const submitAccountButton = document.getElementById('login-mail-button');
-  submitAccountButton.addEventListener('click', () => {
-    // se obtienen los valores de los INPUTS//
+  submitAccountButton.addEventListener('click', () => {  
     const loginMail = document.getElementById('login-mail-input').value;
     const loginPassword = document.getElementById('login-password-input').value;
-    // Se llama la variable 'auth' para aplicar los métodos de Firebase
+    
     auth
       .signInWithEmailAndPassword(loginMail, loginPassword)
       // En el parametro del .then definimos el "userCredential"
       .then(() => {
-        // Si contamos con las credenciales del usuario que esta intentando ingresar,
-        // nos lleva a la página de "Home"
         const homelink = document.getElementById('hom');
         homelink.click();
-      })
-      // El parámetro del .catch es el "error"
+      })   
       .catch(() => {
         openModal(ErrorLoginMail);
       });
   });
-  // El primero es el imput del password y el segundo el ojito para mostrar u ocultar la contraseña
+  
   const showLoginPassword = document.getElementById('visibility-login-password');
   const loginPasswordInput = document.getElementById('login-password-input');
-  // Ejecutar visibility//
-  loginVisibility(showLoginPassword, loginPasswordInput);
-  // GOOGLE LOGIN
-  loginGoogle();
-  // FACEBOOK LOGIN
-  loginFacebook();
-  // GITHUB LOGIN
-  loginGithub();
+ 
+  loginVisibility(showLoginPassword, loginPasswordInput); 
+  loginGoogle(auth);  
+  loginFacebook(auth);
+  loginGithub(auth);
 };

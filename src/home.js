@@ -1,4 +1,12 @@
-export const home = `<div class="flex-container">
+import { createPost, reloadPost } from './perfil.js';
+import { navLinkVisibilityLogin } from "./NavdisplayVisibilityFunctions.js";
+import { validPost } from './postValidation.js';
+import { onAuthDataUser } from './userColection.js';
+
+export const home = (firebase)=>{
+	const auth = firebase.auth();
+	const firestore = firebase.firestore();
+  const template = `<div class="flex-container">
     <div class="flex-menu">
         <div class="subject">
             <h3 class="title">GirlTechSOS</h3>
@@ -39,3 +47,19 @@ export const home = `<div class="flex-container">
             </div>
         </div>
     </div>`;
+
+		const rootDiv = document.getElementById('root');
+		rootDiv.innerHTML = template;
+
+		renderRoutes(template);
+		navLinkVisibilityLogin();
+		onAuthDataUser(auth);
+		validPost();
+		createPost(auth, firestore);
+		reloadPost(auth,firestore);
+};
+
+// export const renderRoutes= (template) => {
+// 	const rootDiv = document.getElementById('root');
+//   rootDiv.innerHTML = template;
+// };
