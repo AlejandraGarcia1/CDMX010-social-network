@@ -1,26 +1,24 @@
-// Este es el punto de entrada de tu aplicacion
 import { getRouter, onNavigate } from './routing.js';
 import { logoutfunction } from './logout.js';
 
-// RESNDERIZAR "Login" en el div "root" POR DEFAULT AL INICIAR LA PÁGINA//
+// RENDERIZAR EL PATHNAME ACTUAL POR DEFAULT AL RECARGAR LA PÁGINA//
 const currentPathname = window.location.pathname;
 onNavigate(currentPathname);
 
-// ENLACES PARA ACCEDER A LAS SECCIONES//
+// Enlaces para acceder a las secciones
 const loginLink = document.getElementById('log');
 const accountLink = document.getElementById('acc');
 const homeLink = document.getElementById('hom');
 const perfilLink = document.getElementById('per');
-// const logooutLink = document.getElementById('logout');
 
-// FUNCIONES QUE RENDERIZAR CADA SECCIÓN//
+// Te llevan al pathname, según el link que se seleccione.
 getRouter(loginLink, '/');
 getRouter(accountLink, '/account');
 getRouter(homeLink, '/home');
 getRouter(perfilLink, '/perfil');
 logoutfunction();
 
-// PARA MOSTRAR EL NAVBAR CUANDO LO HAGAMOS RESPONSIVE Y SE DESPLIEGUE EL MENÚ
+// Mostrar el navbar hamburguesa
 const desplegar = document.getElementById('menu');
 desplegar.onclick = () => {
   const navbar = document.getElementById('nav');

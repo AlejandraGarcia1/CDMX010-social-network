@@ -1,24 +1,16 @@
 import { ErrorLoginFacebook } from './modalError.js';
 import { openModal } from './modal.js';
-import { auth } from './firebase.js';
 
-export const loginFacebook = () => {
-  // Se va a ejecutar al momento de hacerle click a la imagen de FB
+export const loginFacebook = (auth) => {  
   const btnFacebook = document.getElementById('facebook-login');
   btnFacebook.addEventListener('click', () => {
-    // console.log('facebook login');
-    // Se crea un  nuevo usuario con la información de FB.
     const provider = new firebase.auth.FacebookAuthProvider();
-    auth.signInWithPopup(provider)
-    // El parámetro que va dentro de .then es "result"
+    auth.signInWithPopup(provider)    
       .then(() => {
-        // console.log(result);
         const homelink = document.getElementById('hom');
         homelink.click();
       })
-      // El parametro que va dentro de .catch es "err"
       .catch(() => {
-        // console.log(err);
         openModal(ErrorLoginFacebook);
       });
   });

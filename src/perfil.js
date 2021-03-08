@@ -1,10 +1,14 @@
-import { cancelEditPost, validEditedPost } from './postValidation.js';
+import { cancelEditPost, validEditedPost, validPost } from './postValidation.js';
 import { templatePost } from './templatePost.js';
 import { confirmDelete } from './modalError.js';
 import { openModal, closeModalLink } from './modal.js';
-import { auth, firestore } from './firebase.js';
+import { navLinkVisibilityLogin } from './NavdisplayVisibilityFunctions.js';
+import { onAuthDataUser } from './userColection.js';
 
-export const perfil = `<div class="flex-container">
+export const perfil = (firebase) =>{
+	const auth = firebase.auth();
+	const firestore = firebase.firestore();
+	const template = `<div class="flex-container">
     <div class="flex-menu">
         <div class="subject">
         <h3 class="title">GirlTechSOS</h3>
@@ -43,9 +47,18 @@ export const perfil = `<div class="flex-container">
         </div> 
     </div>
 </div>`;
+  const rootDiv = document.getElementById('root');
+  rootDiv.innerHTML = template;
+	navLinkVisibilityLogin();
+	onAuthDataUser(auth);
+	validPost();
+	createPost(auth, firestore);
+	reloadPost(auth,firestore);
+}
+
 
 // ENVIAR LA INFORMACIÓN OBTENIDA AL FIREBASE
-const savePost = (post, usermail, uid, likes) => {
+const savePost = (post, usermail, uid, likes, firestore) => {
   firestore.collection('posts').doc().set({
     post,
     usermail,
@@ -55,27 +68,25 @@ const savePost = (post, usermail, uid, likes) => {
 };
 
 // DA EL ID A FIREBASE PARA ELIMINAR POSTS
-const deletePosts = (id) => firestore.collection('posts').doc(id).delete();
+const deletePosts = (id, firestore) => firestore.collection('posts').doc(id).delete();
 // OBTIENE EL DATO DEL POST DEPENDIENDO DEL ID QUE SE LE ESTE PASANDO
-const getpost = (id) => firestore.collection('posts').doc(id).get();
+const getpost = (id, firestore) => firestore.collection('posts').doc(id).get();
 // ACTUALIZA EL POST
-const updatePosts = (id, updatedPost) => firestore.collection('posts').doc(id).update(updatedPost);
+const updatePosts = (id, updatedPost, firestore) => firestore.collection('posts').doc(id).update(updatedPost);
 // Cuando de crea un nuevo post. --> onSnapshot se refiere a que cada vez que algun post se agregue,
 // elimine o cambie se ejecutará la fucnión de "callback"
-const onGetPost = (callback) => firestore.collection('posts').onSnapshot(callback);
+const onGetPost = (firestore, callback) => firestore.collection('posts').onSnapshot(callback);
 
 // ELIMINAR POSTS
-const EliminarPost = () => {
+const EliminarPost = (firestore) => {
   const btnsDelete = document.querySelectorAll('.btn-delete');
-  // console.log(btnsDelete);
   btnsDelete.forEach((btn) => {
     btn.addEventListener('click', async (e) => {
       openModal(confirmDelete);
       const btnAcept = document.getElementById('btnAcept');
 
       btnAcept.addEventListener('click', () => {
-        // console.log(e.target.dataset.id);
-        deletePosts(e.target.dataset.id);
+        deletePosts(e.target.dataset.id, firestore);
         closeModalLink();
       });
     });
@@ -83,12 +94,12 @@ const EliminarPost = () => {
 };
 
 let editStatus = true;
-const EditPosts = () => {
+const EditPosts = (firestore) => {
   const btnEdit = document.querySelectorAll('.btn-edit');
   btnEdit.forEach((btn) => {
     btn.addEventListener('click', async (e) => {
-      // define los ids indivisuales
-      const postEdit = await getpost(e.target.dataset.id);
+      // define los ids individuales
+      const postEdit = await getpost(e.target.dataset.id, firestore);
       const id = postEdit.id;
       const enableWrite = document.getElementById(`text-post-${id}`);
       const changeIcon = document.getElementById(`btn-edit-${id}`);
@@ -101,16 +112,14 @@ const EditPosts = () => {
         validEditedPost(changeIcon, enableWrite);
         interactionContainer.style.display = 'none';
         cancelEditContainer.style.display = 'flex';
-        // console.log("dentro de if");
         editStatus = false;
       } else if (!editStatus) {
         await updatePosts(id, {
           post: enableWrite.value,
-        });
+        }, firestore);
         changeIcon.src = './images/edit.png';
-        // enableWrite.setAttribute('readonly',true);
+        // enableWrite.setAttribute('readonly',true); // OTRAOPCIÓN(NO BORRAR)
         enableWrite.readOnly = true;
-        // console.log("dentro de else");
         editStatus = true;
         interactionContainer.style.display = 'flex';
         cancelEditContainer.style.display = 'none';
@@ -122,56 +131,44 @@ const EditPosts = () => {
   });
 };
 
-const likesInteraction = () => {
+const likesInteraction = (auth, firestore) => {
   const imgLike = document.querySelectorAll('.like');
   imgLike.forEach((btn) => {
     btn.addEventListener('click', async (e) => {
       // define los ids indivisuales
-      const postData = await getpost(e.target.dataset.id);
-      // console.log(postData.data());
+      const postData = await getpost(e.target.dataset.id, firestore);
       const id = postData.id;
-      // console.log('Le di like', id );
       const user = auth.currentUser;
       const mailUser = user.email;
       const dataPost = postData.data();
       const likesArray = dataPost.likes;
-      // console.log(likesArray);
       let likeUser = '';
       likesArray.forEach((mailU) => {
         if (mailU === mailUser) {
           likeUser = mailU;
-          // console.log(likeUser, 'estoy funcionando');
         }
       });
       if (likeUser === '') {
         likesArray.push(mailUser);
-        // console.log('no estoy')
       } else {
         const positionMail = likesArray.indexOf(likeUser);
         likesArray.splice(positionMail, 1);
       }
       await updatePosts(id, {
         likes: likesArray,
-      });
+      }, firestore);
     });
   });
 };
 
-// PINTAR LA INFORMACIÓN OBTENIDA, EN LA PANT
-export const reloadPost = () => {
+// RENDERIZAR LA INFORMACIÓN OBTENIDA DE COLLECIÓN POSTS
+export const reloadPost = (auth, firestore) => {
   const postContainer = document.getElementById('postsContainer');
   postContainer.innerHTML = '';
-  // Cada vez que se ejecute algun cambio en los posts, se va a ejecutar en onGetPost
-  // que es el "callback" que definimos anteriormente (para obtener los datos a como
-  // lucen actualmente)
-  onGetPost((querySnapshot) => {
-    // Para que no se repitan las publicaciones a la hora de visualizarlas, indicamos que
-    // el postContainer debe estar vacio
+  // SE EJECUTA CADA QUE DETECTA UN CAMBIO EN LA COLECCIÓN
+  onGetPost(firestore, (querySnapshot) => {
     postContainer.innerHTML = '';
-    // Los cambios se guardaran en un objeto llamadao "querySnapchot" y vamos a recorrer
-    // elemento por elemento
     querySnapshot.forEach((doc) => {
-      // console.log(doc.id);
       const idPost = doc.id;
       const postsData = doc.data();
       const likesArray = postsData.likes;
@@ -187,33 +184,29 @@ export const reloadPost = () => {
       }
       postContainer.innerHTML += templatePost(postsData, idPost, likesCounter, srcLike);
       const postOwner = postsData.usermail;
-      // console.log(postOwner);
       if (postOwner !== mailUser) {
         document.getElementById(`btn-delete-${idPost}`).style.display = 'none';
         document.getElementById(`btn-edit-${idPost}`).style.display = 'none';
         document.getElementById(`namePostOwner-container-${idPost}`).style.paddingTop = '5%';
       }
     });
-    EliminarPost();
-    EditPosts();
-    likesInteraction();
+    EliminarPost(firestore);
+    EditPosts(firestore);
+    likesInteraction(auth, firestore);
   });
 };
 
 // Crear un post en la colección 'posts' en Friebase //
-export const createPost = () => {
+export const createPost = (auth,firestore) => {
   const btnPublicar = document.getElementById('publicar');
   const newPostInput = document.getElementById('newPostPerfil');
   btnPublicar.addEventListener('click', async () => {
-    // console.log('Publicar');
     const newPostText = newPostInput.value;
-    // console.log(newPostText);
     const user = auth.currentUser;
     const likes = [];
-    await savePost(newPostText, user.email, user.uid, likes);
+    await savePost(newPostText, user.email, user.uid, likes, firestore);
     document.getElementById('newPostPerfil').value = '';
     btnPublicar.style.display = 'none';
     document.querySelectorAll('.post')[0].style.marginBottom = '10%';
-    // newPostInput.reset();
   });
 };
