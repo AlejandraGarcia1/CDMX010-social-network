@@ -84,7 +84,6 @@ const EliminarPost = (firestore) => {
     btn.addEventListener('click', async (e) => {
       openModal(confirmDelete);
       const btnAcept = document.getElementById('btnAcept');
-
       btnAcept.addEventListener('click', () => {
         deletePosts(e.target.dataset.id, firestore);
         closeModalLink();

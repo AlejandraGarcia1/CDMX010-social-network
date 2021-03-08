@@ -13,7 +13,7 @@ export const routes = {
 
 // Navegamos en la ruta seleccionada, la renderizamos y llamamos sus funciones.
 export const onNavigate = (pathname) => {
-  window.history.pushState(
+  window.history.pushState(		
     {},
     pathname,
     window.location.origin + pathname,

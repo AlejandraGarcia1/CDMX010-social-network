@@ -51,7 +51,7 @@ export const home = (firebase)=>{
 		const rootDiv = document.getElementById('root');
 		rootDiv.innerHTML = template;
 
-		renderRoutes(template);
+		// renderRoutes(template);
 		navLinkVisibilityLogin();
 		onAuthDataUser(auth);
 		validPost();
