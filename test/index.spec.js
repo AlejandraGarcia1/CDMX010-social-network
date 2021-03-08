@@ -1,26 +1,24 @@
 // importamos la funcion que vamos a testear
-import { renderRoutes, rootDiv } from '../src/routing.js';
-import { login } from '../src/login.js'
-import { createAccount } from '../src/account.js'
+// // import { renderRoutes } from '../src/routing.js';
+// import { login } from '../src/login.js'
 
 
 
-//Navegar entre las pantallas
-describe('navegacion', () => {
-	const navegacion = renderRoutes('/', rootDiv);
-	const loginPage = login;
-	console.log(rootDiv)
-//	console.log(navegacion);
-	console.log(loginPage);
-  it('Asegurarnos que el usuario pueda navegar entre las pantallas', () => {
-    expect(navegacion.outerHTML).toBe(loginPage);
+// describe('navegacion', () => {
+// 	// const navegacion = renderRoutes('/');
+// 	const loginPage = login;
+// //	console.log(navegacion);
+// 	console.log(loginPage);
+//   it('Asegurarnos que el usuario pueda navegar entre las pantallas', () => {
+//     expect(navegacion.outerHTML).toBe(loginPage);
+//   });
+// });
+
+import { login } from '../src/login.js';
+
+describe('login', () => {
+  it('debería ser una función', () => {
+    expect(typeof login).toBe('function')
+
   });
 });
-
-// //Mensaje de error cuando un usuario confirma mal su contraseña al momento de registrarse
-// describe('confirm', () => {
-// 	const confirm = createAccount();
-// 	it('Asegurarnos que el usuario escriba su contraseña igual', () => {
-// 		expect(createPassword).toEqual(inputConfirmPassword);
-// 	});
-// });
