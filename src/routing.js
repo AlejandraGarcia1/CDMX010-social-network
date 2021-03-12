@@ -21,13 +21,13 @@ export const onNavigate = (pathname) => {
 
   const builder = routes[pathname];
 	console.log(builder);
+	//Agregamos Firebase porque el pathname es una función
 	builder(firebase);
 };
 
 // EVENTO CLICK, DONDE SE DEFINE SE RENDERIZARÁ EL PATHNAME AL QUE QUEREMOS ACCEDER
 export function getRouter(linkId, PathName) {
   linkId.addEventListener('click', () => {
-    onNavigate(PathName);
-    return false;
+    onNavigate(PathName);    
   });
 }

@@ -81,7 +81,7 @@ const onGetPost = (firestore, callback) => firestore.collection('posts').onSnaps
 const EliminarPost = (firestore) => {
   const btnsDelete = document.querySelectorAll('.btn-delete');
   btnsDelete.forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
+    btn.addEventListener('click', (e) => {
       openModal(confirmDelete);
       const btnAcept = document.getElementById('btnAcept');
       btnAcept.addEventListener('click', () => {
@@ -98,7 +98,7 @@ const EditPosts = (firestore) => {
   btnEdit.forEach((btn) => {
     btn.addEventListener('click', async (e) => {
       // define los ids individuales
-      const postEdit = await getpost(e.target.dataset.id, firestore);
+      const postEdit = await getpost(e.target.dataset.id, firestore);			
       const id = postEdit.id;
       const enableWrite = document.getElementById(`text-post-${id}`);
       const changeIcon = document.getElementById(`btn-edit-${id}`);

@@ -6,8 +6,7 @@ import { loginGithub } from './loginGithub.js';
 import { ErrorLoginMail } from './modalError.js';
 import { navLinkVisibilityWithoutLogin } from './NavdisplayVisibilityFunctions.js';
 
-export const login =  (firebase) => {
-	const auth = firebase.auth();
+export const templateLogin = () =>{
 	const template = `<div class="container-login">
     <div id="A-logo-container">
         <img id="A-logo" src="./images/logoGris.png" alt="Logo"> 
@@ -45,7 +44,12 @@ export const login =  (firebase) => {
 
   const rootDiv = document.getElementById('root');
   rootDiv.innerHTML = template;
+}
 
+//Funcionalidad del templateLogin
+export const login =  (firebase) => {
+	const auth = firebase.auth();	
+	templateLogin();
   loginWithMail(auth);
   navLinkVisibilityWithoutLogin();
 }

@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`templateLogin templateLogin 1`] = `
+"<div class=\\"container-login\\">
+    <div id=\\"A-logo-container\\">
+        <img id=\\"A-logo\\" src=\\"./images/logoGris.png\\" alt=\\"Logo\\"> 
+    </div>
+    <form class=\\"input-section\\" id=\\"input-section-login\\">
+        <div class=\\"input-login\\">
+            <input id=\\"login-mail-input\\" class=\\"A-input-mail\\" type=\\"email\\" maxlength=\\"50\\" placeholder=\\"Email\\" required=\\"\\"><br>
+        </div>
+        <div class=\\"input-login\\">
+            <input id=\\"login-password-input\\" class=\\"A-input-password\\" type=\\"password\\" maxlength=\\"16\\" placeholder=\\"Password\\" required=\\"\\">
+            <img src=\\"./images/visibility.png\\" class=\\"visibility\\" id=\\"visibility-login-password\\">
+        </div>
+        <div class=\\"check-login\\">
+        <br>
+        <input type=\\"checkbox\\" class=\\"checkin\\">  &nbsp; Recordar usuario</div>
+        <div class=\\"button-login\\">
+            <button class=\\"account-button\\" id=\\"login-mail-button\\"> Iniciar Sesión</button>
+            <a href=\\"#\\" class=\\"new-password\\">Recuperar contraseña</a>
+        </div>
+    </form>
+    <div class=\\"socialNet-login\\">
+        <div class=\\"singin\\">
+            <a>Ingresar con:</a>
+        </div>
+        <div class=\\"social\\">
+            <img src=\\"./images/fb.png\\" class=\\"users\\" id=\\"facebook-login\\">
+            <img src=\\"./images/github.png\\" class=\\"users\\" id=\\"github-login\\">
+            <img src=\\"./images/google.png\\" class=\\"users\\" id=\\"google-login\\">
+        </div> 
+    </div>
+    <div class=\\"register-login\\">
+        <p>¿No tienes cuenta? <a href=\\"#\\" id=\\"accountLink-login\\" class=\\"beUser\\">Regístrate</a></p>
+    </div>
+</div>"
+`;

@@ -12,7 +12,7 @@ export const saveInfoUser = (usermail, uid, password, name, aboutUser, imgUser, 
 
 export const onAuthDataUser = (auth) => {
   // Cuando el usuario se acaba de logear y se encuentra en Firebase
-  auth.onAuthStateChanged(async (userAuth) => {
+  auth.onAuthStateChanged((userAuth) => {
     if (userAuth) {
       const user = auth.currentUser;
       // Obtenemos su correo electronico para mostrarlo
